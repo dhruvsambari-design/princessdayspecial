@@ -114,7 +114,7 @@
   </style>
 </head>
 
-<body>
+<body onload="checkLock()">
 
   <!-- PAGE 1 -->
   <div class="page active" id="page1">
@@ -224,8 +224,39 @@ function spawnHearts() {
     setTimeout(() => heart.remove(), 3000);
   }
 }
+function checkLock() {
+  const lockScreen = document.getElementById('lockScreen');
+  const countdown = document.getElementById('countdown');
+
+  function updateCountdown() {
+    const now = new Date();
+    const unlock = new Date();
+    unlock.setHours(24,0,0,0); // midnight
+
+    const diff = unlock - now;
+    if (diff <= 0) {
+      lockScreen.style.display = 'none';
+      document.querySelectorAll('.page')[0].classList.add('active');
+      return;
+    }
+
+    const hrs = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+    countdown.textContent = `${hrs}h ${mins}m ${secs}s`;  
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+}
 </script>
 
   <audio id="bgMusic" src="music/music.mp3" preload="auto"></audio>
+<div id="lockScreen" style="position:fixed; inset:0; background:#ffe6f2; display:flex; flex-direction:column; justify-content:center; align-items:center; font-family:'Poppins', sans-serif; font-size:1.5rem; text-align:center; padding:20px; z-index:9999;">
+  <h2 style="margin-bottom:15px;">⏳ This surprise unlocks at 12:00 AM tonight!</h2>
+  <p style="font-size:1.2rem; max-width:300px;">Come back at midnight, Butki 💗<br><span id="countdown" style="font-size:1.4rem; font-weight:600; display:block; margin-top:20px;"></span> 💗</p>
+</div>
 </body>
 </html>
