@@ -185,10 +185,10 @@ function showNextReason() {
 
 // Play music on first yes button
 function startMusic() {
-  const music = document.getElementById('bgMusic');
-  music.volume = 0.6;
-  music.play().catch(() => {
-    // If autoplay fails, try again after interaction
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.7;
+  music.play().catch(err => {
+    console.log("Autoplay blocked, retrying...", err);
     music.play();
   });
 }
@@ -226,6 +226,6 @@ function spawnHearts() {
 }
 </script>
 
-  <audio id="bgMusic" src="music/music.mp3" autoplay loop></audio>
+  <audio id="bgMusic" src="music/music.mp3" preload="auto"></audio>
 </body>
 </html>
