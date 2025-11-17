@@ -1,165 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Princess Day</title>
-<style>
-    body {
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        background: pink;
-        overflow: hidden;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Princess Day for Butki 👑💗</title>
+  <style>
+    :root {
+      --bg1: #ff99c8;
+      --bg2: #fcf6bd;
+      --accent: #ff5d8f;
+      --accent-2: #ff3571;
+      --text: #4a0e2e;
     }
-
-    .container {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        padding: 20px;
-        position: relative;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
     }
-
-    .hidden {
-        display: none;
+    .page{display:none;padding:48px 20px;min-height:100vh;position:relative;text-align:center}
+    .page.active{display:block;animation:fadeIn .6s ease}
+    h1{font-size:2.4rem;margin:0 0 10px;animation:popIn .45s ease}
+    p{font-size:1.05rem;margin:8px 0 0;line-height:1.5}
+    button{
+      margin-top:28px;padding:12px 22px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-size:1rem;cursor:pointer;
+      transition:transform .15s, background .15s;
     }
-
-    button {
-        padding: 12px 25px;
-        border: none;
-        background: hotpink;
-        color: white;
-        font-size: 18px;
-        border-radius: 10px;
-        cursor: pointer;
-        margin-top: 20px;
-        transition: 0.3s;
+    button:hover{transform:translateY(-3px);background:var(--accent-2)}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes popIn{0%{transform:scale(.8);opacity:0}100%{transform:none;opacity:1}}
+    /* reasons */
+    #reasonsContainer{max-width:720px;margin:18px auto 10px;display:flex;flex-direction:column;gap:14px}
+    .reason{background:rgba(255,255,255,.75);padding:18px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);font-size:1.1rem;transform:translateY(12px);opacity:0;transition:all .6s}
+    .reason.show{transform:none;opacity:1}
+    /* gift */
+    #giftBox{font-size:6rem;cursor:pointer;animation:float 2s infinite ease-in-out}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+    /* hearts */
+    .heart{position:absolute;pointer-events:none;font-size:1.3rem;animation:floatUp linear forwards;opacity:.9}
+    @keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-150px) scale(1.6);opacity:0}}
+    /* responsive */
+    @media (max-width:520px){
+      h1{font-size:1.8rem}
+      #giftBox{font-size:4.5rem}
     }
-
-    button:hover {
-        transform: scale(1.1);
-        background: deeppink;
-    }
-
-    .heart {
-        position: fixed;
-        color: red;
-        font-size: 25px;
-        animation: float 3s linear forwards;
-        pointer-events: none;
-    }
-
-    @keyframes float {
-        0% {opacity: 1; transform: translateY(0) scale(1);}
-        100% {opacity: 0; transform: translateY(-150px) scale(1.5);}
-    }
-
-    .compliment {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: 0.8s;
-        font-size: 26px;
-        margin: 10px 0;
-    }
-
-    .compliment.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-</style>
+  </style>
 </head>
 <body>
 
-<audio id="bgm" src="music/music.mp3"></audio>
+  <!-- AUDIO: make sure your repo has /music/music.mp3 -->
+  <audio id="bgMusic" src="music/music.mp3" preload="auto"></audio>
 
-<div id="page1" class="container">
-    <h1>Hi Butki ❤️</h1>
-    <h2>It's Princess Day tomorrow...</h2>
-    <button onclick="nextPage()">Next</button>
-</div>
+  <!-- PAGE 1 -->
+  <section id="page1" class="page active">
+    <h1>Hi Butki 👑💗</h1>
+    <p>Are you ready for your Princess Day surprise?</p>
+    <!-- IMPORTANT: this button must call startMusic() first so browsers treat it as a user gesture -->
+    <button onclick="startMusic(); goTo(2)">Yes! ✨</button>
+  </section>
 
-<div id="page2" class="container hidden">
-    <h1>Can I show you something special? 🫶</h1>
-    <button onclick="playMusicAndNext()">Yes</button>
-</div>
+  <!-- PAGE 2 -->
+  <section id="page2" class="page">
+    <h1>For My Princess 💖</h1>
+    <p>I made something magical for you, because you deserve the sweetest things.</p>
+    <button onclick="goTo(3)">Show me more ✨</button>
+  </section>
 
-<div id="page3" class="container hidden">
-    <h1>Here are some things I adore about you ❤️</h1>
-    <div id="compliments"></div>
-    <button onclick="nextPage()">Next</button>
-</div>
+  <!-- PAGE 3: reasons reveal one-by-one -->
+  <section id="page3" class="page">
+    <h1>Why You're My Princess, Butki 💗</h1>
+    <div id="reasonsContainer"></div>
+    <div style="margin-top:18px">
+      <button id="reasonsBtn" onclick="showNextReason()">Next ✨</button>
+    </div>
+  </section>
 
-<div id="page4" class="container hidden">
-    <h1>My Princess 👑</h1>
-    <p style="font-size:22px; max-width:700px;">
-        You are the warmth in my chaos, the softness in my days,
-        and the happiest part of my life.  
-        No matter what happens, no matter where we are,
-        you will always be my princess. ❤️
+  <!-- PAGE 4: gift box reveal -->
+  <section id="page4" class="page">
+    <h1>Open Your Princess Day Gift, Butki 🎁</h1>
+    <div id="giftBox" onclick="openGift()">🎁</div>
+    <p id="giftText" style="display:none; margin-top:20px; font-size:1.15rem; max-width:700px; margin-left:auto; margin-right:auto; line-height:1.6;">
+      Butki, you are the softest part of my world. Every little thing about you makes my days sweeter, brighter, and warmer. No matter what changes, no matter where life goes, one thing will always stay the same — you will always be my princess.
     </p>
-    <button onclick="nextPage()">Next</button>
-</div>
+    <div style="margin-top:18px">
+      <button id="nextBtn" style="display:none" onclick="goTo(5)">Continue 💗</button>
+    </div>
+  </section>
 
-<div id="page5" class="container hidden">
-    <h1>Happy Princess Day, Butki ❤️👑</h1>
-    <h2>You mean more than words can say.</h2>
-</div>
+  <!-- PAGE 5: final -->
+  <section id="page5" class="page">
+    <h1>My Princess Forever 👑</h1>
+    <p>You will always be my princess.</p>
+  </section>
 
 <script>
-let currentPage = 1;
-const complimentsList = [
-    "Your smile is the cutest thing ever 😭❤️",
-    "Your voice makes everything better 🫶",
-    "You make my world feel soft and warm 💕",
-    "You are effortlessly adorable, every single day 🌸",
-    "I feel lucky to have you, Butki ❤️"
-];
+  // --- navigation ---
+  function goTo(n){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const el = document.getElementById('page'+n);
+    if(el) el.classList.add('active');
+    spawnHearts();
+  }
 
-function nextPage() {
-    document.getElementById("page" + currentPage).classList.add("hidden");
-    currentPage++;
-    document.getElementById("page" + currentPage).classList.remove("hidden");
+  // --- music (plays on first "Yes" click) ---
+  function startMusic(){
+    const m = document.getElementById('bgMusic');
+    if(!m) return;
+    m.volume = 0.7;
+    // Play and ignore promise rejection (will succeed because called from button click)
+    m.play().catch(()=>{ /* fallback ignored */ });
+  }
 
-    if (currentPage === 3) showCompliments();
-}
+  // --- hearts spawn ---
+  function spawnHearts(count=10){
+    for(let i=0;i<count;i++){
+      const h = document.createElement('div');
+      h.className='heart';
+      h.textContent = '💗';
+      const size = 12 + Math.floor(Math.random()*18);
+      h.style.fontSize = size+'px';
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.bottom = (10 + Math.random()*40) + 'px';
+      h.style.animationDuration = (2 + Math.random()*2) + 's';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(), 3000);
+    }
+  }
 
-function playMusicAndNext() {
-    const bgm = document.getElementById("bgm");
-    bgm.play().catch(e => console.log("Autoplay blocked:", e));
-    nextPage();
-}
+  // --- reasons flow (one by one) ---
+  const reasons = [
+    "You make every day feel magical.",
+    "Your smile makes everything instantly better.",
+    "You’re the cutest princess in the whole world.",
+    "Your presence makes everything softer and happier.",
+    "My world feels complete because you're in it."
+  ];
+  let reasonIndex = 0;
+  function showNextReason(){
+    const container = document.getElementById('reasonsContainer');
+    const btn = document.getElementById('reasonsBtn');
+    if(reasonIndex < reasons.length){
+      const d = document.createElement('div');
+      d.className = 'reason';
+      d.textContent = reasons[reasonIndex];
+      container.appendChild(d);
+      // trigger show animation on next tick
+      setTimeout(()=>d.classList.add('show'), 20);
+      reasonIndex++;
+      spawnHearts(6);
+    }
+    if(reasonIndex >= reasons.length){
+      btn.textContent = "Continue 🎁";
+      btn.onclick = ()=>goTo(4);
+    }
+  }
 
-function showCompliments() {
-    const container = document.getElementById("compliments");
-    container.innerHTML = "";
+  // --- gift open ---
+  function openGift(){
+    const box = document.getElementById('giftBox');
+    const text = document.getElementById('giftText');
+    const next = document.getElementById('nextBtn');
+    if(!box) return;
+    box.style.display = 'none';
+    text.style.display = 'block';
+    next.style.display = 'inline-block';
+    spawnHearts(18);
+  }
 
-    complimentsList.forEach((line, index) => {
-        const div = document.createElement("div");
-        div.className = "compliment";
-        div.textContent = line;
-        container.appendChild(div);
-
-        setTimeout(() => {
-            div.classList.add("show");
-            createHeart();
-        }, index * 900);
-    });
-}
-
-function createHeart() {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.textContent = "❤️";
-    heart.style.left = Math.random() * window.innerWidth + "px";
-    heart.style.top = window.innerHeight + "px";
-
-    document.body.appendChild(heart);
-
-    setTimeout(() => heart.remove(), 3000);
-}
+  // small UX: spawn a tiny heart on initial load
+  setTimeout(()=>spawnHearts(6), 600);
 </script>
 
 </body>
