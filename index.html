@@ -120,7 +120,7 @@
   <div class="page active" id="page1">
     <h1>Hi Butki 👑💗</h1>
     <p>Are you ready for your Princess Day surprise?</p>
-    <button onclick="nextPage(2)">Yes! ✨</button>
+    <button onclick="startMusic(); nextPage(2)">Yes! ✨</button>
   </div>
 
   <!-- PAGE 2 -->
@@ -181,6 +181,16 @@ function showNextReason() {
       nextBtn.onclick = () => nextPage(4);
     }
   }
+}
+
+// Play music on first yes button
+function startMusic() {
+  const music = document.getElementById('bgMusic');
+  music.volume = 0.6;
+  music.play().catch(() => {
+    // If autoplay fails, try again after interaction
+    music.play();
+  });
 }
 
 function nextPage(num) {
